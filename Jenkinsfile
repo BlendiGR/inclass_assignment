@@ -3,13 +3,14 @@ pipeline {
 
     tools {
         maven 'Maven3'
+        docker "Docker"
     }
 
   environment {
      DOCKERHUB_CREDENTIALS_ID = 'docker_hub'
      DOCKERHUB_REPO = 'blendigr/blendi_test'
      DOCKER_IMAGE_TAG = 'latest'
-     PATH = "/usr/local/bin:${env.PATH}"
+     PATH = "/usr/local/bin:$PATH"
   }
 
    stages{
