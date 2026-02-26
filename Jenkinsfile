@@ -3,13 +3,13 @@ pipeline {
 
     tools {
         maven 'Maven3'
-        dockerTool 'docker-tool'
     }
 
     environment {
         DOCKERHUB_CREDENTIALS_ID = 'docker_hub'
         DOCKERHUB_REPO = 'blendigr/blendi_test'
         DOCKER_IMAGE_TAG = 'latest'
+        PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH"
     }
 
     stages {
@@ -46,6 +46,14 @@ pipeline {
                         customImage.push()
                     }
                 }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                sh "docker rmi ${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG} || true"
             }
         }
     }
