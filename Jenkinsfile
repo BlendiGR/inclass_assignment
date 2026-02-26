@@ -16,7 +16,7 @@ pipeline {
    stages{
       stage('check'){
           steps {
-              git url: ''
+              git url: 'https://github.com/BlendiGR/inclass_assignment.git'
          }
       }
 
