@@ -40,11 +40,12 @@ pipeline {
 
         stage('Build & Push Docker Image') {
             steps {
-                script {
-                    docker.withRegistry('', "${env.DOCKERHUB_CREDENTIALS_ID}") {
-                        def customImage = docker.build("${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}")
-                        customImage.push()
-                    }
+                withCredentials([usernamePassword(credentialsId: "${env.DOCKERHUB_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker build -t ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG} .
+                        docker push ${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}
+                    '''
                 }
             }
         }
