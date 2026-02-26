@@ -3,66 +3,50 @@ pipeline {
 
     tools {
         maven 'Maven3'
+        docker 'docker-tool'
     }
 
-  environment {
-     DOCKERHUB_CREDENTIALS_ID = 'docker_hub'
-     DOCKERHUB_REPO = 'blendigr/blendi_test'
-     DOCKER_IMAGE_TAG = 'latest'
-     PATH = "/usr/local/bin:$PATH"
-  }
+    environment {
+        DOCKERHUB_CREDENTIALS_ID = 'docker_hub'
+        DOCKERHUB_REPO = 'blendigr/blendi_test'
+        DOCKER_IMAGE_TAG = 'latest'
+    }
 
-   stages{
-      stage('check'){
-          steps {
-              git branch: 'main', url: 'https://github.com/BlendiGR/inclass_assignment.git'
-         }
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/BlendiGR/inclass_assignment.git'
+            }
+        }
 
-      stage('build job: '){
-          steps {
-            sh  'mvn clean install'
-          }
-      }
-      stage('test'){
-          steps {
-            sh 'mvn test'
-          }
-      }
-      stage('Report'){
-          steps {
-               sh 'mvn jacoco:report'
-          }
-      }
+        stage('Build & Test') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
 
-      stage('Publish Test Results') {
-             steps {
+        stage('Report Generation') {
+            steps {
+                sh 'mvn jacoco:report'
+            }
+        }
+
+        stage('Publish Results') {
+            steps {
                 junit '**/target/surefire-reports/*.xml'
-             }
-      }
-      stage('Publish Coverage Report') {
-              steps {
-                  jacoco()
-              }
-      }
+                jacoco()
+            }
+        }
 
-      stage('Build Docker Image') {
-          steps {
-              sh '/usr/local/bin/docker build -t blendigr/blendi_test:latest .'
-          }
-      }
-
-      stage('Push to Docker Hub') {
-          steps {
-              script {
-                  docker.withRegistry('https://index.docker.io/v1/', 'docker_hub') {
-                      sh "docker push blendigr/blendi_test:latest"
-                  }
-              }
-          }
- }
-
-
-
-   }
+        stage('Build & Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('', "${env.DOCKERHUB_CREDENTIALS_ID}") {
+                        def customImage = docker.build("${env.DOCKERHUB_REPO}:${env.DOCKER_IMAGE_TAG}")
+                        customImage.push()
+                    }
+                }
+            }
+        }
+    }
 }
