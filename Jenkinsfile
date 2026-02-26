@@ -46,22 +46,24 @@ pipeline {
       }
 
       stage('Build Docker Image') {
-                    steps {
-                       script {
-                           docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
-                       }
-                    }
-               }
+          steps {
+              script {
+                  docker.withTool('my-docker-tool-name') {
+                      sh 'docker build -t blendigr/blendi_test:latest .'
+                  }
+              }
+          }
+      }
 
-               stage('Push Docker Image to Docker Hub') {
-                        steps {
-                            script {
-                                docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
-                                    docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
-                                }
-                            }
-                        }
-               }
+      stage('Push Docker Image to Docker Hub') {
+                              steps {
+                                  script {
+                                      docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS_ID) {
+                                          docker.image("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}").push()
+                                      }
+                                  }
+                              }
+                     }
 
 
 
