@@ -9,6 +9,7 @@ pipeline {
      DOCKERHUB_CREDENTIALS_ID = 'Docker_Hub'
      DOCKERHUB_REPO = 'blendigr/blendi_test'
      DOCKER_IMAGE_TAG = 'latest'
+     PATH = "/usr/local/bin:${env.PATH}"
   }
 
    stages{
