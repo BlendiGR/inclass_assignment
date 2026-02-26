@@ -55,7 +55,7 @@ pipeline {
       stage('Push to Docker Hub') {
           steps {
               script {
-                  docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-creds') {
+                  docker.withRegistry('https://index.docker.io/v1/', 'docker_hub') {
                       sh "docker push blendigr/blendi_test:latest"
                   }
               }
