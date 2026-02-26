@@ -47,11 +47,7 @@ pipeline {
 
       stage('Build Docker Image') {
           steps {
-              script {
-                  docker.withTool('my-docker-tool-name') {
-                      sh 'docker build -t blendigr/blendi_test:latest .'
-                  }
-              }
+              sh '/usr/local/bin/docker build -t blendigr/blendi_test:latest .'
           }
       }
 
