@@ -3,8 +3,7 @@ import java.util.Scanner;
 
 
 public class Main {
-
-    static void main() {
+    public static void main(String[] args) {
         Meter meter = new Meter();
 
         Scanner scan = new Scanner(System.in);
